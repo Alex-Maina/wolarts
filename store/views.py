@@ -1,9 +1,46 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import * 
 from django.shortcuts import render
 from django.http import JsonResponse, HttpResponse 
 import json 
 from datetime import datetime
+from django.contrib import messages
+from .forms import OrderForm, CreateUserForm
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import authenticate, login, logout
+
+
+def register(request):
+    form = CreateUserForm()
+    
+    if request.method == 'POST':
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            user=form.cleaned_data.get('username')
+            messages.success(request, 'Hey ' + user + '! Account created successfully.')
+            return redirect('loginPage')
+    
+    context = {'form': form}
+    return render(request, 'store/register.html', context)
+    return
+
+
+def loginPage(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login (request, user)
+            return redirect('store')
+            
+    context = {}
+    return render(request, 'store/login.html', context)
+	
+
 
 def store(request):
     if request.user.is_authenticated:
@@ -69,9 +106,9 @@ def updateItem (request):
         orderItem.quantity = (orderItem.quantity + 1)
     elif action == 'remove':
         orderItem.quantity = (orderItem.quantity - 1)
-        
     orderItem.save()
     if orderItem.quantity <= 0:
+        messages.info(request,f"{product.name} removed from cart")
         orderItem.delete()
     
     return JsonResponse('Item was added', safe=False)

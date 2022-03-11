@@ -117,3 +117,18 @@ ul{
 .hidden{
 	display: none!important;
 }
+
+.input-group-text {
+	color: grey !important;
+	border: 0 !important;
+	border-radius: 0.25rem 0 0 0.25rem !important;
+}
+
+.input_user, .input_pass:focus {
+			box-shadow: none !important;
+			outline: 0px !important;
+		}
+
+.form_container {
+	margin-top: 20px;
+}

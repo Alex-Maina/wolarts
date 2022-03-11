@@ -46,15 +46,14 @@ class Product(models.Model):
     
     def __str__(self):
         return self.name
-    '''
+    
     @property
-    def imageURL(self):
-        try:
-            url = self.image.url
-        except:
-            url = ''
-            return url
-    '''
+    def update_inventory(self):
+        orderItem = self.orderitem_set.all()
+        updatedInventory = orderItem.get_remaining_stock
+        
+
+        
     
 class Order(models.Model):
 	customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True, blank=True)
@@ -87,6 +86,12 @@ class OrderItem(models.Model):
     def get_total(self):
         total = self.product.price * self.quantity
         return total
+    
+    @property
+    def get_remaining_stock(self):
+        stock = self.product.inventory - self.quantity
+        Product.inventory = stock
+        Product.save()
 
 class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
