@@ -45,11 +45,6 @@ class Product(models.Model):
     
     def __str__(self):
         return self.name
-    
-    @property
-    def update_inventory(self):
-        orderItem = self.orderitem_set.all()
-        updatedInventory = orderItem.get_remaining_stock
         
 
         
