@@ -46,11 +46,15 @@ def loginPage(request):
         if user is not None:
             login (request, user)
             return redirect('store')
+        else:
+            messages.info(request,'Username or Password is incorrect')
             
-    context = {}
-    return render(request, 'store/login.html', context)
-	
+    return render(request, 'store/login.html')
 
+def logoutUser(request):
+    logout(request)
+    return redirect('store')
+    
 
 def store(request):
     if request.user.is_authenticated:
