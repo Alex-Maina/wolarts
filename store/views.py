@@ -97,7 +97,8 @@ def checkout(request):
 		#Create empty cart for now for non-logged in user
 		items = []
 		order = {'get_cart_total':0, 'get_cart_items':0}
-		cartItems = order['get_cart_items']
+		cartItems = order['get_cart_items'] 
+        
 
 	context = {'items':items, 'order':order, 'cartItems':cartItems}
 	return render(request, 'store/checkout.html', context)
@@ -134,12 +135,22 @@ def processOrder (request):
     if request.user.is_authenticated:
         customer = request.user.customer
         order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
         total=float(data['form']['total'])
         order.transaction_id = transaction_id
         
         if total == order.get_cart_total:
             order.complete = True
             order.save()
+            
+            #Reduce inventory after successful purchase
+            for item in items:
+                item.product.inventory -= item.quantity
+                item.save()
+                item.product.save()
+                order.complete = True
+                order.save()
+            
             
         ShippingAddress.objects.create(
             customer=customer,
