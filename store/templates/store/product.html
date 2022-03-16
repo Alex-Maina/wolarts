@@ -1,26 +1,43 @@
 {% extends 'store/main.html' %}
 {% load static %}
 {% block content %}
-
-
-	<div class="row">
-		{% for product in products %}
-		<div class="col-lg-3 productDisplay">
-			<img class="thumbnail" src="{{product.image.url}}">
-			<div class="box-element product">
-				<h6><strong>{{product.name}}</strong></h6>
-				<hr>
-				<button data-product={{product.id}} data-action="add" style="float: right" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
-				<a style="float: right; margin-right:5px" class="btn btn-outline-success" href="#">View</a> <span class="">
-				<br>
-				<h4 style="float: right"><strong>Ksh.{{product.price}}</strong></h4>
-
-			</div>
+	
+	<main class="container-wrapper">
+		
+        <!-- Left Column/product image -->
+        <div class="left-column"> 
+			<img src="{{product.image.url}}" >
 		</div>
 
-		{% endfor %}
-	</div>
+		
+        <!-- Right Column -->
+  		<div class="right-column">
+ 
+    		<!-- Product Description -->
+			<div class="product-description"> 
 
-    
+				<a  class="btn btn-outline-dark"  href="{% url 'store' %}">&#x2190; Continue Shopping</a>
+
+				<br>
+
+				<h1 style="padding-top: 30px;">{{product.name}}</h1>
+				 <p>
+					{{product.description}}
+				</p> 
+			</div>
+ 
+    		<!-- Product Configuration -->
+    		<div class="product-configuration">
+ 
+				<div class="product-price">
+					<span>Ksh.{{product.price}}</span>
+					<button data-product={{product.id}} data-action="add" style="float: right" 
+					class="btn btn-secondary add-btn update-cart">Add to Cart</button>
+
+				</div>
+				</div>
+			  </main>
+
+	</main>
 
 {% endblock content %}
