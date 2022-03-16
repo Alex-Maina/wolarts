@@ -10,6 +10,8 @@
 
 	<link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
+	
+	
 	<script type="text/javascript">
 		var user = '{{request.user}}'
 
@@ -30,6 +32,34 @@
 		    return cookieValue;
 		}
 		var csrftoken = getToken('csrftoken')
+
+		// Create cart cookie
+		function getCookie(name) {
+		    // Split cookie string and get all individual name=value pairs in an array
+		    var cookieArr = document.cookie.split(";");
+
+		    // Loop through the array elements
+		    for(var i = 0; i < cookieArr.length; i++) {
+		        var cookiePair = cookieArr[i].split("=");
+
+		        /* Removing whitespace at the beginning of the cookie name and compare it with the given string */
+		        if(name == cookiePair[0].trim()) {
+		            // Decode the cookie value and return
+		            return decodeURIComponent(cookiePair[1]);
+		        }
+		    }
+
+		    // Return null if not found
+		    return null;
+		}
+		var cart = JSON.parse(getCookie('cart'))
+
+		if (cart == undefined){
+			cart = {}
+			console.log('Cart Created!', cart)
+			document.cookie ='cart=' + JSON.stringify(cart) + ";domain=;path=/"
+		}
+		console.log('Cart:', cart)
 	
 	</script>
 
@@ -49,13 +79,13 @@
 	    	<a class="nav-link" href="{% url 'store' %}">Store <span class="sr-only">(current)</span></a>
 	    </li>
 		<li class="nav-item">
-			<a class="nav-link" href="{% url 'store' %}">Articles <span class="sr-only">(current)</span></a>
+			<a class="nav-link" href="{% url 'articles' %}">Articles <span class="sr-only">(current)</span></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="{% url 'store' %}">Our Story<span class="sr-only">(current)</span></a>
+			<a class="nav-link" href="{% url 'our-story' %}">Our Story<span class="sr-only">(current)</span></a>
 		</li>
 		<li class="nav-item">
-			<a class="nav-link" href="{% url 'store' %}">Contact Us<span class="sr-only">(current)</span></a>
+			<a class="nav-link" href="{% url 'contact-us' %}">Contact Us<span class="sr-only">(current)</span></a>
 		</li>
 	 
 	    </ul>
@@ -65,6 +95,7 @@
 				<a href={% url 'register' %} class="btn btn-outline-primary" style= "margin-right: 20px;">Sign Up</a>
 
 	     		<a href={% url 'login' %} class="btn btn-primary login" style= "margin-right: 20px;">Login</a>
+
 			</div>
 
 			<div id="logout">
@@ -83,7 +114,7 @@
 	  </div>
 	</nav>
 
-     <div class="container">
+     <div class="container body">
             <br>
 			
 			<script type="text/javascript">
@@ -107,6 +138,17 @@
          </div>
 
 
+
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+
+	<script src="{% static 'js/cart.js' %}"></script>
+
+
+
 <!-- Footer -->
 <footer class="page-footer font-small stylish-color-dark pt-4">
 
@@ -122,9 +164,14 @@
 		<div class="col-md-4 mx-auto">
   
 		  <!-- Content -->
-		  <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Wol Art</h5>
-		  <p>Your one stop shop for Home/Office wall arts and photo mounting. <br/> <br/>
-			Deliveries done countrywide </p>
+		  <h5 class="font-weight-bold text-uppercase mt-3 mb-4">Wol Arts</h5>
+		<p> 
+			Nairobi, Kenya
+		</p>
+		<p>
+			Your one stop shop for Home/Office wall arts and photo mounting. <br/> <br/>
+			Deliveries done countrywide 
+		</p>
 
 		</div>
 		<!-- Grid column -->
@@ -139,14 +186,17 @@
   
 		  <ul class="list-unstyled">
 			<li>
-			  <a href="#!">Home</a>
+			  <a href="">Store</a>
 			</li>
 			<li>
-			  <a href="#!">Our Story</a>
+				<a href={% url 'articles' %}>Articles</a>
+			  </li>
+			<li>
+			  <a href={% url 'our-story' %}>Our Story</a>
 			</li>
 			<li>
-			  <a href="#!">Contact Us</a>
-			</li>
+				<a href={% url 'contact-us' %}>Contact Us</a>
+			  </li>
 		  </ul>
 		</div>
 		<!-- Grid column -->
@@ -165,10 +215,10 @@
 				<a href="https://wa.me/254787255941" target="_blank">WhatsApp</a>
 			</li>
 			<li>
-			  <a href="https://instagram.com/wol_arts/">Instagram</a>
+			  <a href="https://instagram.com/wol_arts/" target="_blank">Instagram</a>
 			</li>
 			<li>
-			  <a href="#!">Facebook</a>
+			  <a href="https://facebook.com/WolArts/"target="_blank">Facebook</a>
 			</li>
 		  </ul>
   
@@ -183,7 +233,7 @@
   
 	<!-- Copyright -->
 	<div class="col-md-12 text-center">
-		<p> Copyright Maina Kimani© <br/>
+		<p> Copyright © 
 		   <script>
 		   document.write(new Date().getFullYear());
 		   </script> 
@@ -194,19 +244,7 @@
   </footer>
   <!-- Footer -->
 
-
-
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-
-	<script src="{% static 'js/cart.js' %}"></script>
-
-	
-
-
 </body>
+
 </html>
  
