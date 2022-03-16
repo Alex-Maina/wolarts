@@ -10,5 +10,9 @@ urlpatterns = [
 	path('process_order/', views.processOrder, name="process_order"),
     path('register/', views.register, name="register"),
     path('login/', views.loginPage, name="login"),
-    path('logout/', views.logoutUser, name="logout")
+    path('logout/', views.logoutUser, name="logout"),
+    path('product/<str:pk>/', views.product, name="product"),
+    path('contact-us/', views.contactUs, name="contact-us"),
+    path('our-story/', views.ourStory, name="our-story"),
+    path('articles/', views.articles, name="articles"),
 ]

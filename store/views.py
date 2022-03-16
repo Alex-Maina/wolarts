@@ -8,10 +8,16 @@ from django.contrib import messages
 from .forms import OrderForm, CreateUserForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate, login, logout
+from .utils import cookieCart
+
 
 
 def register(request):
     form = CreateUserForm()
+    cookieData = cookieCart(request)
+    cartItems = cookieData['cartItems']
+    order = cookieData['order']
+    items = cookieData['items']
     
     if request.method == 'POST':
         form = CreateUserForm(request.POST)
@@ -31,12 +37,16 @@ def register(request):
             messages.success(request, 'Hey ' + user + '! Account created successfully.')
             return redirect('login')
     
-    context = {'form': form}
+    context = {'form': form, 'cartItems':cartItems}
     return render(request, 'store/register.html', context)
-    return
 
 
 def loginPage(request):
+    cookieData = cookieCart(request)
+    cartItems = cookieData['cartItems']
+    order_cookie = cookieData['order']
+    items = cookieData['items']
+    
     if request.method == 'POST':
         username = request.POST.get('username')
         password = request.POST.get('password')
@@ -45,11 +55,28 @@ def loginPage(request):
         
         if user is not None:
             login (request, user)
+            
+            #gets data stored in cookie and updates the database
+            customer = request.user.customer
+            order, created = Order.objects.get_or_create(
+                customer=customer,
+                complete=False,
+            )
+            for item in items:
+                product = Product.objects.get(id=item['product']['id'])
+                orderItem, created = OrderItem.objects.get_or_create(order=order, product=product, quantity=item['quantity'])
+                
+            items = order.orderitem_set.all()
+            cartItems = order.get_cart_items
+            
+            
+            
             return redirect('store')
         else:
             messages.info(request,'Username or Password is incorrect')
             
-    return render(request, 'store/login.html')
+    context = {'cartItems':cartItems}
+    return render(request, 'store/login.html', context)
 
 def logoutUser(request):
     logout(request)
@@ -65,43 +92,42 @@ def store(request):
     else:
         #Create empty cart for now for non-logged in user
         items = []
-        order = {'get_cart_total':0, 'get_cart_items':0}
-        cartItems = order['get_cart_items']
+        cookieData = cookieCart(request)
+        cartItems = cookieData['cartItems']
     
     products = Product.objects.all()
     context = {'products':products, 'cartItems':cartItems}
     return render(request, 'store/store.html', context)
 
 def cart(request):
-	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
-		items = order.orderitem_set.all()
-		cartItems = order.get_cart_items
-	else:
-		#Create empty cart for now for non-logged in user
-		items = []
-		order = {'get_cart_total':0, 'get_cart_items':0}
-		cartItems = order['get_cart_items']
-
-	context = {'items':items, 'order':order, 'cartItems':cartItems}
-	return render(request, 'store/cart.html', context)
+    #updates cart for authenticated user
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    
+    #updates cart for unauthenticated user
+    else:
+        cookieData = cookieCart(request)
+        cartItems = cookieData['cartItems']
+        order = cookieData['order']
+        items = cookieData['items']
+    
+    context = {'items':items, 'order':order, 'cartItems':cartItems}
+    return render(request, 'store/cart.html', context)
 	
 def checkout(request):
-	if request.user.is_authenticated:
-		customer = request.user.customer
-		order, created = Order.objects.get_or_create(customer=customer, complete=False)
-		items = order.orderitem_set.all()
-		cartItems = order.get_cart_items
-	else:
-		#Create empty cart for now for non-logged in user
-		items = []
-		order = {'get_cart_total':0, 'get_cart_items':0}
-		cartItems = order['get_cart_items'] 
-        
-
-	context = {'items':items, 'order':order, 'cartItems':cartItems}
-	return render(request, 'store/checkout.html', context)
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        return redirect('login')
+    
+    context = {'items':items, 'order':order, 'cartItems':cartItems}
+    return render(request, 'store/checkout.html', context)
 
 def updateItem (request):
     data = json.loads(request.body)
@@ -167,3 +193,29 @@ def processOrder (request):
         print("Customer is not logged in")
     
     return JsonResponse ('Payment Complete!', safe=False)
+
+def product (request, pk):
+    product = Product.objects.get(id=pk)
+    
+    if request.user.is_authenticated:
+        customer = request.user.customer
+        order, created = Order.objects.get_or_create(customer=customer, complete=False)
+        items = order.orderitem_set.all()
+        cartItems = order.get_cart_items
+    else:
+        #Create empty cart for now for non-logged in user
+        items = []
+        cookieData = cookieCart(request)
+        cartItems = cookieData['cartItems']
+    
+    context = {'product':product,'cartItems':cartItems}
+    return render(request, 'store/product.html', context)
+
+def ourStory(request):
+    return render(request, 'store/our_story.html')
+
+def contactUs(request):
+    return render(request, 'store/contact_us.html')
+
+def articles(request):
+    return render(request, 'store/articles.html')
