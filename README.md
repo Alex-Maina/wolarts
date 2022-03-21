@@ -5,7 +5,7 @@
 This is an E-commerce project that is primary built using django framework and contains all the essentials for viewing products, 
 adding and reducing products from the cart, and updating the inventory. The website is deployed on Heroku.
 
-## **Project Overview**
+# **Project Overview**
 This project focused on building an e-commerce platform, primarily focusing on the essentials for viewing products, 
 adding and reducing products from the cart, and updating the inventory after a purchase is completed.  
 Additionally, login and registration functionalities are included. Non-authorized customers can view and add products to cart, 
@@ -13,7 +13,10 @@ but have to login/register to checkout.
 To assist in building something realistic, I set on a journey to build an online art shop for a business that I run – Wol Arts.  
 
 **View it on the web:** https://wolarts.herokuapp.com/ 
+
+
 **Languages and tools used:** 
+
 python (Django framework), JavaScript, HTML, and CSS.
 Database - SQLite
 
@@ -23,7 +26,9 @@ I'll be happy if you provide any feedback or code improvements or suggestions.
 
 
 *Feel free to reach out via:*
+
 [LinkedIn](linkedin.com/in/mainakimani/)
+
 [Twitter](twitter.com/maina_kimani_/) 
 
 
