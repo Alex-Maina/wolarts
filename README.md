@@ -27,9 +27,9 @@ I'll be happy if you provide any feedback or code improvements or suggestions.
 
 *Feel free to reach out via:*
 
-[LinkedIn](linkedin.com/in/mainakimani/)
+[LinkedIn](https://linkedin.com/in/mainakimani/)
 
-[Twitter](twitter.com/maina_kimani_/) 
+[Twitter](https://twitter.com/maina_kimani_/) 
 
 
 # Functionalities
@@ -43,3 +43,7 @@ I'll be happy if you provide any feedback or code improvements or suggestions.
 Django Version Used – 4.0.2 
 Python Version Used – 3.8.10
 Other requirements to run the project can be extracted from the [requirements.txt](https://github.com/Alex-Maina/wolarts/blob/master/requirements.txt) 
+
+
+# Future Implementations
+Payment functionality using Stripe API and Daraja API (Safaricom-Mpesa)
